@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         tvTip = (TextView) findViewById(R.id.tv_tip);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 6);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 5);
         mRecyclerView.setLayoutManager(layoutManager);
 
         myAdapter = new MyAdapter(datas, this, new MyAdapter.Listener() {
