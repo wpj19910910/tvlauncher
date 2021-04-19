@@ -89,7 +89,6 @@ public class MainActivity extends Activity {
 
             @Override
             public void onLongClick(int position) {
-                Toast.makeText(MainActivity.this, "置顶：" + datas.get(position).getName(), Toast.LENGTH_SHORT).show();
                 AppInfo appInfo = datas.get(position);
                 datas.remove(appInfo);
                 datas.add(0, appInfo);
@@ -98,8 +97,8 @@ public class MainActivity extends Activity {
                 String appStr = mSharedPreferences.getString(SHARED_PREFERENCES_APP_LIST_KEY, "");
                 Log.i(TAG, "本地应用顺序：" + appStr);
                 appStr = appStr.replaceAll(appInfo.getPackageName(), "");
-                appStr = appInfo.getPackageName() + "|" + appStr;
-                appStr = appStr.replaceAll("||", "");
+                appStr = appInfo.getPackageName() + "," + appStr;
+                appStr = appStr.replaceAll(",,", "");
                 Log.i(TAG, "新应用顺序：" + appStr);
                 SharedPreferences.Editor editor = mSharedPreferences.edit();
                 editor.putString(SHARED_PREFERENCES_APP_LIST_KEY, appStr);
@@ -119,7 +118,7 @@ public class MainActivity extends Activity {
         String appStr = mSharedPreferences.getString(SHARED_PREFERENCES_APP_LIST_KEY, "");
         Log.i(TAG, "本地应用顺序：" + appStr);
         //本地存储的app有序列表
-        List<String> appList = Arrays.asList(appStr.split("\\|"));
+        List<String> appList = Arrays.asList(appStr.split(","));
         //记录app顺序
         StringBuilder sb = new StringBuilder();
         //记录新增的app顺序
@@ -142,7 +141,7 @@ public class MainActivity extends Activity {
                     //添加到全局应用列表
                     list.add(info2AppInfo(info, pm));
                     //记录app顺序
-                    sb.append(info.activityInfo.packageName).append("|");
+                    sb.append(info.activityInfo.packageName).append(",");
                     continue;
                 }
             }
@@ -157,7 +156,7 @@ public class MainActivity extends Activity {
                 //添加到新增应用列表
                 newAppList.add(info2AppInfo(info, pm));
                 //记录新增app顺序
-                newSb.append(info.activityInfo.packageName).append("|");
+                newSb.append(info.activityInfo.packageName).append(",");
             }
         }
         //将新增应用列表添加到全局应用列表最后
@@ -169,7 +168,7 @@ public class MainActivity extends Activity {
             sb.append(str);
         }
         if (sb.length() > 1) {
-            //去掉最后一个分隔符'|'
+            //去掉最后一个分隔符','
             String str = sb.substring(0, sb.length() - 1);
             Log.i(TAG, "新应用顺序：" + str);
             //保存到本地
