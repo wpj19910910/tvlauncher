@@ -97,9 +97,9 @@ public class MainActivity extends Activity {
                 //本地记录排序
                 String appStr = mSharedPreferences.getString(SHARED_PREFERENCES_APP_LIST_KEY, "");
                 Log.i(TAG, "本地应用顺序：" + appStr);
-                appStr.replaceAll(appInfo.getPackageName(), "");
-                appStr.replaceAll("||", "");
+                appStr = appStr.replaceAll(appInfo.getPackageName(), "");
                 appStr = appInfo.getPackageName() + "|" + appStr;
+                appStr = appStr.replaceAll("||", "");
                 Log.i(TAG, "新应用顺序：" + appStr);
                 SharedPreferences.Editor editor = mSharedPreferences.edit();
                 editor.putString(SHARED_PREFERENCES_APP_LIST_KEY, appStr);
