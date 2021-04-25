@@ -48,12 +48,13 @@ public class MainActivity extends Activity {
         hideStatusBar();
         mSharedPreferences = getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         EventBus.getDefault().register(this);
+
+        initView();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        initView();
     }
 
     //全屏并且隐藏状态栏
@@ -67,7 +68,7 @@ public class MainActivity extends Activity {
     }
 
     public void initView() {
-        datas = GetAppList1(this);
+        datas = getAppList(this);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         tvTip = (TextView) findViewById(R.id.tv_tip);
 
@@ -110,10 +111,9 @@ public class MainActivity extends Activity {
 
         mRecyclerView.setFocusable(true);
         mRecyclerView.setFocusableInTouchMode(true);
-
     }
 
-    public static List<AppInfo> GetAppList1(Context context) {
+    public List<AppInfo> getAppList(Context context) {
         List<AppInfo> list = new ArrayList<>();
         String appStr = mSharedPreferences.getString(SHARED_PREFERENCES_APP_LIST_KEY, "");
         Log.i(TAG, "本地应用顺序：" + appStr);
@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
         List<ResolveInfo> activities = pm.queryIntentActivities(mainIntent, 0);
         //循环本地应用列表，按序排列
         for (int i = 0; i < appList.size(); i++) {
-            //过滤当前应用
+            //过滤本应用
             if (TextUtils.equals(appList.get(i), context.getPackageName())) {
                 continue;
             }
@@ -181,8 +181,8 @@ public class MainActivity extends Activity {
 
     private static AppInfo info2AppInfo(ResolveInfo info, PackageManager pm) {
         AppInfo mInfo = new AppInfo();
-        mInfo.setIco(info.activityInfo.applicationInfo.loadIcon(pm));
-        mInfo.setName(info.activityInfo.applicationInfo.loadLabel(pm).toString());
+        mInfo.setIco(info.loadIcon(pm));
+        mInfo.setName(info.loadLabel(pm).toString());
         mInfo.setPackageName(info.activityInfo.packageName);
         // 为应用程序的启动Activity 准备Intent
         Intent launchIntent = new Intent();
@@ -209,7 +209,9 @@ public class MainActivity extends Activity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void handleClearEvent(String str) {
         if (TextUtils.equals(str, "app_list_update")) {
-            initView();
+            datas.clear();
+            datas.addAll(getAppList(this));
+            myAdapter.notifyDataSetChanged();
         }
     }
 
